@@ -1,0 +1,10 @@
+#Пример круга, с размытием Гаусса
+<svg width="220" height="220" viewbox="0 0 220 220" >
+<defs>
+<filter id="myFilter1">
+<feGaussianBlur stdDeviation="10"/>
+</filter>
+</defs>
+<circle cx="110" cy="110" fill="#3498db" 
+filter="url(#myFilter1)" r="89" />
+</svg>
