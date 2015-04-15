@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/SVG/DTD/svg10.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="40 50 320 320"
+ xml:space="preserve"
+ onload = "startup(evt)" >
+
+<script>
+<![CDATA[
+
+var xmlns="http://www.w3.org/2000/svg";
+var xlinkns = "http://www.w3.org/1999/xlink"; 
+
+var wWidth;
+var wHeight;
+//major, minor axis and focus
+var a = 15;
+var b = 5;
+var c = Math.sqrt(Math.pow(a,2)-Math.pow(b,2));
+var dotA = 1;
+var dotB = 1;
+var dotAsm = dotA/5.0;
+var dotBsm = dotB/5.0;
+var dotEllipse = 0.2;
+
+var X ;
+var Y ;
+var Xa;
+var Ya = 0;
+var Xb = 0;
+var Yb;
+
+var Scale = 10;
+
+var x_axis;
+var y_axis;
+var connector;
+var ellipse;
+var ellipseDot;
+var baseA;
+var baseB;
+var baseAsm;
+var baseBsm;
+
+var T = 0.0;
+var Counter = 0;
+
+var Tinc = 25;
+
+var ePathString="";
+var connectorPathString="";
+
+
+var RPS = 0.1;
+var Omega = RPS *2*Math.PI;
+var phi = 0;
+var basePhi = 0;
+
+// Do not make more path string after 1-cycle
+var NPath = 1000/Tinc/RPS+1;
+
+function startup(evt)
+{
+ calculateXY();
+
+ x_axis = document.getElementById("x-axis");
+ y_axis = document.getElementById("y-axis");
+ connector = document.getElementById("Connector");
+ ellipse = document.getElementById("Ellipse");
+ ellipseDot = document.getElementById("EllipseDot");
+ baseA = document.getElementById("BaseA");
+ baseB = document.getElementById("BaseB");
+ baseAsm = document.getElementById("BaseAsm");
+ baseBsm = document.getElementById("BaseBsm");
+
+ x_axis.setAttributeNS(null,"d","M"+(-a-b)*Scale+",0"+
+ " L"+(a+b)*Scale+",0");
+ y_axis.setAttributeNS(null,"d","M0,"+(-a)*Scale+
+ " L0,"+a*Scale);
+
+ baseA.setAttributeNS(null,"cx",Xa*Scale);
+ baseA.setAttributeNS(null,"cy",Ya*Scale);
+ baseA.setAttributeNS(null,"r",dotA*Scale);
+ 
+ baseB.setAttributeNS(null,"cx",Xb*Scale);
+ baseB.setAttributeNS(null,"cy",Yb*Scale);
+ baseB.setAttributeNS(null,"r",dotB*Scale);
+
+ baseAsm.setAttributeNS(null,"cx",Xa*Scale);
+ baseAsm.setAttributeNS(null,"cy",Ya*Scale);
+ baseAsm.setAttributeNS(null,"r",dotAsm*Scale);
+ 
+ baseBsm.setAttributeNS(null,"cx",Xb*Scale);
+ baseBsm.setAttributeNS(null,"cy",Yb*Scale);
+ baseBsm.setAttributeNS(null,"r",dotBsm*Scale);
+
+ ellipseDot.setAttributeNS(null,"cx",X*Scale);
+ ellipseDot.setAttributeNS(null,"cy",Y*Scale);
+ ellipseDot.setAttributeNS(null,"r",dotEllipse*Scale);
+
+ ePathString ="M"+Math.round(X*Scale)+","+Math.round(Y*Scale); 
+ ellipse.setAttributeNS(null,"d",ePathString); 
+
+ connectorPathString ="M"+Math.round(X*Scale)+","+Math.round(Y*Scale)+" L"+Math.round(Xb*Scale)+","+Math.round(Yb*Scale); 
+ connector.setAttributeNS(null,"d",connectorPathString);
+
+ setInterval("Animate()",Tinc);
+}
+
+function calculateXY()
+{
+ T = Counter*Tinc/1000;
+ X = a*Math.cos(Omega*T+basePhi);
+ Y = b*Math.sin(Omega*T+basePhi);
+ 
+ if(X >= 0) Xa = X - Math.sqrt(b*b-Y*Y);
+ else if(X < 0)Xa = X + Math.sqrt(b*b-Y*Y);
+ if(Y >= 0) Yb = Y - Math.sqrt(a*a-X*X);
+ else if(Y < 0) Yb = Y + Math.sqrt(a*a-X*X);
+}
+
+function Animate()
+{
+ Counter++;
+ calculateXY();
+
+ baseA.setAttributeNS(null,"cx",Xa*Scale);
+ baseA.setAttributeNS(null,"cy",Ya*Scale);
+ baseA.setAttributeNS(null,"r",dotA*Scale);
+ 
+ baseB.setAttributeNS(null,"cx",Xb*Scale);
+ baseB.setAttributeNS(null,"cy",Yb*Scale);
+ baseB.setAttributeNS(null,"r",dotB*Scale);
+
+ baseAsm.setAttributeNS(null,"cx",Xa*Scale);
+ baseAsm.setAttributeNS(null,"cy",Ya*Scale);
+ baseAsm.setAttributeNS(null,"r",dotAsm*Scale);
+ 
+ baseBsm.setAttributeNS(null,"cx",Xb*Scale);
+ baseBsm.setAttributeNS(null,"cy",Yb*Scale);
+ baseBsm.setAttributeNS(null,"r",dotBsm*Scale);
+
+ ellipseDot.setAttributeNS(null,"cx",X*Scale);
+ ellipseDot.setAttributeNS(null,"cy",Y*Scale);
+ ellipseDot.setAttributeNS(null,"r",dotEllipse*Scale);
+
+ if(Counter <= NPath) {
+ ePathString +=" L"+Math.round(X*Scale)+","+Math.round(Y*Scale); 
+ ellipse.setAttributeNS(null,"d",ePathString); 
+ }
+
+ connectorPathString ="M"+Math.round(X*Scale)+","+Math.round(Y*Scale)+" L"+Math.round(Xb*Scale)+","+Math.round(Yb*Scale); 
+ connector.setAttributeNS(null,"d",connectorPathString);
+}
+]]>
+</script> 
+
+<g id="MyTrammel" transform="translate(200,200)">
+ <path id="x-axis" stroke-width="1" stroke="black" fill="none"/>
+ <path id="y-axis" stroke-width="1" stroke="black" fill="none"/>
+
+ <circle id="EllipseDot" cx="0" cy="0" stroke-width="1" stroke="purple" fill="red" opacity="1.0"/>
+ <circle id="BaseA" cx="0" cy="0" stroke-width="1" stroke="green" fill="lime" opacity="1.0"/>
+ <circle id="BaseB" cx="0" cy="0" stroke-width="1" stroke="blue" fill="aqua" opacity="1.0"/>
+ <circle id="BaseAsm" cx="0" cy="0" stroke-width="1" stroke="green" fill="green" opacity="1.0"/>
+ <circle id="BaseBsm" cx="0" cy="0" stroke-width="1" stroke="blue" fill="blue" opacity="1.0"/>
+ <path id="Ellipse" stroke-width="1" stroke="red" fill="none" opacity="1.0"/>
+ <path id="Connector" stroke-width="1" stroke="black" fill="white"/>
+</g>
+</svg>
